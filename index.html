@@ -1,11 +1,168 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <title>Home</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Генератор паролей</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 40px 20px;
+            margin: 0;
+        }
+        .container {
+            background: #fff;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            max-width: 400px;
+            width: 100%;
+            border-radius: 8px;
+            padding: 25px 30px;
+        }
+        h1 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #333;
+            text-align: center;
+        }
+        label {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            font-weight: 600;
+            color: #555;
+        }
+        label input[type="checkbox"] {
+            margin-right: 10px;
+            width: 18px;
+            height: 18px;
+        }
+        input[type="number"] {
+            width: 80px;
+            padding: 7px 10px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+            margin-left: 10px;
+        }
+        button {
+            cursor: pointer;
+            background-color: #0069d9;
+            border: none;
+            padding: 12px;
+            border-radius: 6px;
+            color: white;
+            font-size: 17px;
+            width: 100%;
+            margin-top: 10px;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #004a9f;
+        }
+        #result {
+            margin-top: 25px;
+            padding: 18px;
+            background-color: #e9ecef;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 18px;
+            text-align: center;
+            user-select: all;
+            word-break: break-all;
+        }
+        .footer {
+            margin-top: 35px;
+            text-align: center;
+            font-size: 13px;
+            color: #aaa;
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome to my website!</h1>
+    <div class="container">
+        <h1>Генератор паролей</h1>
+        <form id="passwordForm" onsubmit="return false;">
+            <label>
+                Длина пароля:
+                <input type="number" id="length" name="length" min="4" max="50" value="12" required />
+            </label>
+            <label>
+                <input type="checkbox" id="uppercase" name="uppercase" checked />
+                Использовать прописные буквы (A-Z)
+            </label>
+            <label>
+                <input type="checkbox" id="lowercase" name="lowercase" checked />
+                Использовать строчные буквы (a-z)
+            </label>
+            <label>
+                <input type="checkbox" id="numbers" name="numbers" checked />
+                Использовать цифры (0-9)
+            </label>
+            <label>
+                <input type="checkbox" id="special" name="special" checked />
+                Использовать спецсимволы (!@#$%)
+            </label>
+            <button id="generateBtn" type="submit">Сгенерировать пароль</button>
+        </form>
+
+        <div id="result" aria-live="polite" aria-atomic="true"></div>
+    </div>
+
+    <script>
+        const form = document.getElementById('passwordForm');
+        const resultDiv = document.getElementById('result');
+
+        form.addEventListener('submit', async () => {
+            // Считываем значения из формы
+            const length = parseInt(document.getElementById('length').value);
+            const uppercase = document.getElementById('uppercase').checked;
+            const lowercase = document.getElementById('lowercase').checked;
+            const numbers = document.getElementById('numbers').checked;
+            const special = document.getElementById('special').checked;
+
+            // Простая валидация
+            if (length < 4 || length > 50) {
+                alert('Длина пароля должна быть от 4 до 50 символов.');
+                return;
+            }
+            if (!uppercase && !lowercase && !numbers && !special) {
+                alert('Выберите хотя бы один тип символов.');
+                return;
+            }
+
+            resultDiv.textContent = 'Генерируем...';
+
+            try {
+                const response = await fetch('/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        length,
+                        uppercase,
+                        lowercase,
+                        numbers,
+                        special
+                    })
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    resultDiv.textContent = data.password;
+                } else {
+                    resultDiv.textContent = 'Ошибка: ' + (data.error || 'неизвестная ошибка');
+                }
+            } catch (error) {
+                resultDiv.textContent = 'Ошибка при подключении к серверу.';
+            }
+        });
+    </script>
 </body>
 </html>
