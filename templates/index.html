@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -8,17 +9,17 @@
         body {
             font-family: Arial, sans-serif;
             background: #f4f6f8;
+            min-height: 100vh;
+            margin: 0;
+            padding: 40px 20px;
             display: flex;
             justify-content: center;
             align-items: flex-start;
-            min-height: 100vh;
-            padding: 40px 20px;
-            margin: 0;
         }
         .container {
             background: #fff;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            max-width: 400px;
+            max-width: 450px;
             width: 100%;
             border-radius: 8px;
             padding: 25px 30px;
@@ -26,11 +27,11 @@
         h1 {
             margin-top: 0;
             margin-bottom: 20px;
-            font-size: 24px;
+            font-size: 26px;
             color: #333;
             text-align: center;
         }
-        label {
+        form label {
             display: flex;
             align-items: center;
             margin-bottom: 15px;
@@ -52,7 +53,7 @@
         }
         button {
             cursor: pointer;
-            background-color: #0069d9;
+            background-color: #007bff;
             border: none;
             padding: 12px;
             border-radius: 6px;
@@ -63,7 +64,7 @@
             transition: background-color 0.3s ease;
         }
         button:hover {
-            background-color: #004a9f;
+            background-color: #0056b3;
         }
         #result {
             margin-top: 25px;
@@ -73,8 +74,30 @@
             font-family: monospace;
             font-size: 18px;
             text-align: center;
-            user-select: all;
             word-break: break-all;
+            user-select: all;
+        }
+        .password-list {
+            margin-top: 30px;
+            max-height: 200px;
+            overflow-y: auto;
+            padding-left: 0;
+            list-style: none;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background: #fafafa;
+        }
+        .password-list li {
+            padding: 8px 15px;
+            border-bottom: 1px solid #ddd;
+            font-family: monospace;
+            font-size: 16px;
+            color: #444;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        .password-list li:hover {
+            background-color: #e1e7f0;
         }
         .footer {
             margin-top: 35px;
@@ -82,16 +105,29 @@
             font-size: 13px;
             color: #aaa;
         }
+        .logout-btn {
+            display: block;
+            margin: 15px auto 0;
+            text-align: center;
+            color: #007bff;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .logout-btn:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Генератор паролей</h1>
+
         <form id="passwordForm" onsubmit="return false;">
             <label>
                 Длина пароля:
                 <input type="number" id="length" name="length" min="4" max="50" value="12" required />
             </label>
+
             <label>
                 <input type="checkbox" id="uppercase" name="uppercase" checked />
                 Использовать прописные буквы (A-Z)
@@ -106,61 +142,80 @@
             </label>
             <label>
                 <input type="checkbox" id="special" name="special" checked />
-                Использовать спецсимволы (!@#$%)
+                Использовать спецсимволы (!@#$%^&*()_+-=[]{}|;:,.<>?)
             </label>
             <button id="generateBtn" type="submit">Сгенерировать пароль</button>
         </form>
 
         <div id="result" aria-live="polite" aria-atomic="true"></div>
+
+        <h2>Сохранённые пароли</h2>
+        <ul class="password-list" id="passwordList">
+            <!-- Здесь будут отображены сохранённые пароли -->
+        </ul>
+
+        <a href="{{ url_for('logout') }}" class="logout-btn">Выйти</a>
     </div>
 
     <script>
         const form = document.getElementById('passwordForm');
         const resultDiv = document.getElementById('result');
+        const passwordList = document.getElementById('passwordList');
+
+        // Функция для обновления списка сохранённых паролей из шаблона
+        function updatePasswordList(passwords) {
+            passwordList.innerHTML = '';
+            if (!passwords || passwords.length === 0) {
+                passwordList.innerHTML = '<li>Нет сохранённых паролей</li>';
+                return;
+            }
+            passwords.forEach(pwd => {
+                const li = document.createElement('li');
+                li.textContent = pwd;
+                li.title = 'Нажмите, чтобы скопировать';
+                li.addEventListener('click', () => {
+                    navigator.clipboard.writeText(pwd).then(() => {
+                        alert('Пароль скопирован в буфер обмена');
+                    });
+                });
+                passwordList.appendChild(li);
+            });
+        }
+
+        // Инициализация списка сохранённых паролей из контекста шаблона
+        const existingPasswords = {{ passwords|tojson }};
+        updatePasswordList(existingPasswords);
 
         form.addEventListener('submit', async () => {
-            // Считываем значения из формы
             const length = parseInt(document.getElementById('length').value);
             const uppercase = document.getElementById('uppercase').checked;
             const lowercase = document.getElementById('lowercase').checked;
             const numbers = document.getElementById('numbers').checked;
             const special = document.getElementById('special').checked;
 
-            // Простая валидация
-            if (length < 4 || length > 50) {
-                alert('Длина пароля должна быть от 4 до 50 символов.');
-                return;
-            }
             if (!uppercase && !lowercase && !numbers && !special) {
-                alert('Выберите хотя бы один тип символов.');
+                resultDiv.textContent = 'Пожалуйста, выберите хотя бы один тип символов!';
                 return;
             }
-
-            resultDiv.textContent = 'Генерируем...';
 
             try {
                 const response = await fetch('/generate', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        length,
-                        uppercase,
-                        lowercase,
-                        numbers,
-                        special
-                    })
+    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ length, uppercase, lowercase, numbers, special })
                 });
 
                 const data = await response.json();
+
                 if (response.ok) {
                     resultDiv.textContent = data.password;
+                    existingPasswords.push(data.password);
+                    updatePasswordList(existingPasswords);
                 } else {
-                    resultDiv.textContent = 'Ошибка: ' + (data.error || 'неизвестная ошибка');
+                    resultDiv.textContent = data.error || 'Ошибка при генерации пароля';
                 }
             } catch (error) {
-                resultDiv.textContent = 'Ошибка при подключении к серверу.';
+                resultDiv.textContent = 'Ошибка сети или сервера';
             }
         });
     </script>
