@@ -18,13 +18,13 @@
     <title>Регистрация</title>
 </head>
 <body>
-    <h2>Регистрация</h2>
     <form method="post">
+        <h2>Регистрация</h2>
         <input name="username" placeholder="Логин" required>
         <input name="password" type="password" placeholder="Пароль" required>
         <input name="password" type="password" placeholder="Повторите пароль" required>
         <button type="submit">Зарегистрироваться</button>
+        <p>Уже есть аккаунт? <a href="{{ url_for('login') }}">Войти</a></p>
     </form>
-    <p>Уже есть аккаунт? <a href="{{ url_for('login') }}">Войти</a></p>
 </body>
 </html>
