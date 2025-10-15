@@ -40,7 +40,6 @@ def create_password(length=12, uppercase=True, lowercase=True, numbers=True, spe
     password = ''.join(random.choice(chars) for _ in range(length))
     return password
 
-# Главная страница
 @app.route('/')
 def home():
     if 'username' in session:
@@ -67,7 +66,28 @@ def login():
         else:
             return "Неверный логин или пароль", 401
 
-    return render_template('login.html')  # Отображаем форму входа
+    return render_template('login.html')
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if 'username' in session:
+        return redirect(url_for('home'))
+
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        if not username or not password:
+            return "Логин и пароль обязательны", 400
+        if username in users:
+            return "Пользователь уже существует", 400
+        # Добавляем пользователя
+        users[username] = password
+        saved_passwords[username] = []
+        save_passwords_to_file()
+        session['username'] = username
+        return redirect(url_for('home'))
+
+    return render_template('register.html')
 
 @app.route('/logout')
 def logout():
@@ -101,6 +121,7 @@ def generate():
 
     except Exception as e:
         return jsonify({'error': str(e)}), 400
+
 
 if __name__ == '__main__':
     app.run(debug=True)
