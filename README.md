@@ -2,13 +2,17 @@
 Программа создания пароля из уникальных комбинаций символов для защиты ваших акаунтов
 
 ### Функционал
-1. Авторизация в программе
-<div align="center"> <img width="514" height="390" alt="image" src="https://github.com/user-attachments/assets/3137ee58-bdcc-4714-ae66-24b24a3012cd" /> </div> <br>
+1. Авторизация в программе <br>
+<div align="center"> <img width="513" height="447" alt="image" src="https://github.com/user-attachments/assets/05fd5ab2-8627-481a-8e2d-8fe796cd7757"/> </div> <br>
+2. Регистраци в программе <br>
+<div align="center"> <img width="509" height="508" alt="image" src="https://github.com/user-attachments/assets/af11056f-cd57-4697-9ea6-7c1274fabe78"/> </div> <br>
 3. Настраиваемая длина пароля: по умолчанию - 12 символов <br>
 4. Безопасный пароль: генерируется из случайных символов <br>
 5. Различные типы символов: прописные буквы, строчные буквы, цифры, спецсимволы <br>
+6. Сохранение паролей <br>
 <br>
-<div align="center"> <img width="558" height="774" alt="image" src="https://github.com/user-attachments/assets/dfb8adb9-7514-4829-b271-4b05f50abd77" /> </div>
+<div align="center"> <img width="604" height="784" alt="image" src="https://github.com/user-attachments/assets/09b55baf-edd3-44b4-9e51-0f98ce041cb2" />
+ </div>
 
 ### Что необходимо для работы: 
 1. Установить Python https://www.python.org/downloads/
