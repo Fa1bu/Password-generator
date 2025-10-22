@@ -139,25 +139,23 @@ def generate():
         elif length > 50:
             length = 50
 
-        uppercase = data.get('uppercase', True)
-        lowercase = data.get('lowercase', True)
-        numbers = data.get('numbers', True)
-        special = data.get('special', True)
+        def to_bool(value):
+            if isinstance(value, bool):
+                return value
+            if isinstance(value, str):
+                return value.lower() in ['true', '1', 'yes']
+            return bool(value)
+
+        uppercase = to_bool(data.get('uppercase', True))
+        lowercase = to_bool(data.get('lowercase', True))
+        numbers = to_bool(data.get('numbers', True))
+        special = to_bool(data.get('special', True))
 
         password = create_password(length, uppercase, lowercase, numbers, special)
-
-        user = session['username']
-        saved_passwords.setdefault(user, []).append({
-            'site': 'generated_password',
-            'login': '',
-            'password': password
-        })
-        save_data()
-
         return jsonify({'password': password})
-
     except Exception as e:
         return jsonify({'error': str(e)}), 400
+
 
 if __name__ == '__main__':
     load_data()
