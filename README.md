@@ -6,13 +6,11 @@
 <div align="center"> <img width="513" height="447" alt="image" src="https://github.com/user-attachments/assets/05fd5ab2-8627-481a-8e2d-8fe796cd7757"/> </div> <br>
 2. Регистраци в программе <br>
 <div align="center"> <img width="509" height="508" alt="image" src="https://github.com/user-attachments/assets/af11056f-cd57-4697-9ea6-7c1274fabe78"/> </div> <br>
-3. Настраиваемая длина пароля: по умолчанию - 12 символов <br>
-4. Безопасный пароль: генерируется из случайных символов <br>
-5. Различные типы символов: прописные буквы, строчные буквы, цифры, спецсимволы <br>
-6. Сохранение паролей <br>
+3. Настройка пароля (различные типы символов) <br>
+4. Генирация пароля <br>
+5. Сохранение сайта, логина, пароля <br>
 <br>
-<div align="center"> <img width="604" height="784" alt="image" src="https://github.com/user-attachments/assets/09b55baf-edd3-44b4-9e51-0f98ce041cb2" />
- </div>
+<div align="center"> <img width="1920" height="750" alt="image" src="https://github.com/user-attachments/assets/9ea61962-f30a-4900-b08f-d04edd121a92"/> </div> <br>
 
 ### Что необходимо для работы: 
 1. Установить Python https://www.python.org/downloads/
@@ -26,5 +24,3 @@
 ### Использование
 1. Войдите в систему
 2. Откройте главную страницу
-3. Нажмите кнопку "Сгенирироваить пароль"
-4. Программа автоматическмий создаст и сохранит пароль
