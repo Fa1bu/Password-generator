@@ -3,14 +3,14 @@
 
 ### Функционал
 1. Авторизация в программе <br>
-<div align="center"> <img width="513" height="447" alt="image" src="https://github.com/user-attachments/assets/05fd5ab2-8627-481a-8e2d-8fe796cd7757"/> </div> <br>
+<div align="center"> <img width="486" height="176" alt="image" src="https://github.com/user-attachments/assets/e3fc52fb-ac74-4d50-b21f-bf949871d098" /> </div> <br>
 2. Регистраци в программе <br>
-<div align="center"> <img width="509" height="508" alt="image" src="https://github.com/user-attachments/assets/af11056f-cd57-4697-9ea6-7c1274fabe78"/> </div> <br>
+<div align="center"> <img width="554" height="155" alt="image" src="https://github.com/user-attachments/assets/9b2976c2-cd7c-4e10-811f-bdf807c482c8" /> </div> <br>
 3. Настройка пароля (различные типы символов) <br>
 4. Генирация пароля <br>
 5. Сохранение сайта, логина, пароля <br>
 <br>
-<div align="center"> <img width="1920" height="750" alt="image" src="https://github.com/user-attachments/assets/9ea61962-f30a-4900-b08f-d04edd121a92"/> </div> <br>
+<div align="center"> <img width="694" height="238" alt="image" src="https://github.com/user-attachments/assets/3d9b49a0-97a4-4ee5-92f3-0ac74a0cf492" /> </div> <br>
 
 ### Что необходимо для работы: 
 1. Установить Python https://www.python.org/downloads/
