@@ -1,212 +1,30 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8" />
-    <title>Мои пароли</title>
-    <style>
+<!doctype html>
+<title>Пароли</title>
+<h1>Сохранённые пароли для {{ session.username }}</h1>
 
-body {
-    font-family: Arial, sans-serif;
-    background: #f9fafb;
-    color: #333;
-    margin: 0;
-    padding: 20px;
-}
+<form method="post" action="{{ url_for('save_password') }}">
+  <input name="site" placeholder="Сайт" required>
+  <input name="login" placeholder="Логин" required>
+  <input name="password" placeholder="Пароль" required>
+  <button type="submit">Сохранить</button>
+</form>
 
-h2, h3 {
-    color: #2c3e50;
-}
+<ul>
+  {% for p in passwords %}
+    <li><strong>{{ p.site }}</strong> — Логин: {{ p.login }}, Пароль: {{ p.password }}</li>
+  {% else %}
+    <li>Нет сохранённых паролей</li>
+  {% endfor %}
+</ul>
 
-a {
-    display: inline-block;
-    margin-bottom: 20px;
-    color: #0056b3;
-    text-decoration: none;
-    font-weight: 600;
-}
+<p><a href="{{ url_for('logout') }}">Выйти</a></p>
 
-a:hover {
-    text-decoration: underline;
-}
-
-.container {
-    max-width: 900px;
-    margin: 0 auto;
-    background: #fff;
-    padding: 30px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    border-radius: 8px;
-}
-
-table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    border-radius: 6px;
-    overflow: hidden;
-}
-
-th, td {
-    padding: 12px 15px;
-    text-align: left;
-}
-
-th {
-    background-color: #2980b9;
-    color: #fff;
-    font-weight: 600;
-}
-
-tbody tr:nth-child(even) {
-    background: #f2f7fb;
-}
-
-tbody tr:hover {
-    background: #d6eaff;
-    cursor: pointer;
-}
-
-input[type="text"], input[type="number"] {
-    width: calc(100% - 22px);
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1.5px solid #ccc;
-    border-radius: 6px;
-    font-size: 16px;
-    transition: border-color 0.3s ease;
-}
-
-input[type="text"]:focus, input[type="number"]:focus {
-    outline: none;
-    border-color: #0056b3;
-    box-shadow: 0 0 8px rgba(52,152,219,0.3);
-}
-
-button {
-    background-color: #2980b9;
-    color: white;
-    border: none;
-    padding: 12px 24px;
-    border-radius: 6px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-button:hover {
-    background-color: #1c5984;
-}
-
-label {
-    margin-right: 12px;
-    font-size: 14px;
-    color: #555;
-    user-select: none;
-}
-
-#generatedPassword {
-    margin-top: 15px;
-    font-weight: 600;
-    font-size: 18px;
-    color: #2c3e50;
-}
-
-/* Чекбоксы с отступами */
-input[type="checkbox"] {
-    margin-right: 5px;
-    vertical-align: middle;
-}
-    </style>
-</head>
-<body>
-    <h2>Здравствуйте, {{ session['username'] }}!</h2>
-    <a href="{{ url_for('logout') }}">Выйти</a>
-
-    <h3>Сохранённые пароли</h3>
-    {% if passwords %}
-        <table>
-            <tr>
-                <th>Сайт</th>
-                <th>Логин</th>
-                <th>Пароль</th>
-            </tr>
-            {% for p in passwords %}
-            <tr>
-                <td>{{ p.site }}</td>
-                <td>{{ p.login }}</td>
-                <td>{{ p.password }}</td>
-            </tr>
-            {% endfor %}
-        </table>
-    {% else %}
-        <p>Вы еще ничего не сохранили.</p>
-    {% endif %}
-
-    <h3>Добавить новый пароль</h3>
-    <form id="addPasswordForm">
-        <input type="text" id="site" placeholder="Сайт" required />
-        <input type="text" id="login" placeholder="Логин" required />
-        <input type="text" id="password" placeholder="Пароль" required />
-        <button type="submit">Сохранить</button>
-    </form>
-
-    <h3>Генерация пароля</h3>
-    <form id="generateForm">
-        <label>Длина:</label>
-        <input type="number" id="length" value="12" min="4" max="50" />
-        <br/>
-        <label><input type="checkbox" id="uppercase" checked /> Заглавные буквы</label>
-        <label><input type="checkbox" id="lowercase" checked /> Строчные буквы</label>
-        <label><input type="checkbox" id="numbers" checked /> Цифры</label>
-        <label><input type="checkbox" id="special" checked /> Специальные символы</label>
-        <br/>
-        <button type="button" onclick="generatePassword()">Создать пароль</button>
-    </form>
-    <div id="generatedPassword"></div>
-
-    <script>
-        // Добавление нового пароля
-        document.getElementById('addPasswordForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const site = document.getElementById('site').value;
-            const login = document.getElementById('login').value;
-            const password = document.getElementById('password').value;
-
-            fetch('/save_password', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ site, login, password })
-            }).then(res => res.json())
-              .then(data => {
-                if(data.error) alert(data.error);
-                else location.reload();
-            });
-        });
-
-        // Генерация пароля
-        function generatePassword() {
-            const length = document.getElementById('length').value;
-            const uppercase = document.getElementById('uppercase').checked;
-            const lowercase = document.getElementById('lowercase').checked;
-            const numbers = document.getElementById('numbers').checked;
-            const special = document.getElementById('special').checked;
-
-            fetch('/generate', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ length, uppercase, lowercase, numbers, special })
-            }).then(res => res.json())
-              .then(data => {
-                  if(data.password){
-                      document.getElementById('generatedPassword').innerText = 'Пароль: ' + data.password;
-                      document.getElementById('password').value = data.password;
-                  }else{
-                      alert(data.error);
-                  }
-              });
-        }
-    </script>
-</body>
-</html>
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul style="color:green">
+      {% for m in messages %}
+        <li>{{ m }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
